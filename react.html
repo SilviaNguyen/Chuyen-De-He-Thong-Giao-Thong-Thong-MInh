@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quản Lý Thu Phí</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body>
+  <div id="root"></div>
+  <script type="module">
+    import React from 'https://cdn.jsdelivr.net/npm/react@18/umd/react.production.min.js';
+    import ReactDOM from 'https://cdn.jsdelivr.net/npm/react-dom@18/umd/react-dom.production.min.js';
+    function TollManagementApp() {
+      const [plate, setPlate] = React.useState('');
+      const [message, setMessage] = React.useState('');
+      const handleSubmit = async () => {
+        try {
+          const response = await fetch('http://localhost:8000/process_plate', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ plate_text: plate }),
+          });
+          const data = await response.json();
+          setMessage(`Biển số đã xử lý: ${data.plate}`);
+        } catch (error) {
+          setMessage('Lỗi khi xử lý biển số');
+        }
+      };
+      return (
+        <div className="p-4 max-w-md mx-auto">
+          <h1 className="text-2xl font-bold mb-4">Quản Lý Thu Phí</h1>
+          <input
+            type="text"
+            value={plate}
+            onChange={(e) => setPlate(e.target.value)}
+            className="border p-2 w-full mb-2"
+            placeholder="Nhập biển số xe"
+          />
+          <button
+            onClick={handleSubmit}
+            className="bg-blue-500 text-white p-2 w-full rounded"
+          >
+            Gửi
+          </button>
+          {message && <p className="mt-2">{message}</p>}
+        </div>
+      );
+    }
+    ReactDOM.render(<TollManagementApp />, document.getElementById('root'));
+  </script>
+</body>
+</html>
